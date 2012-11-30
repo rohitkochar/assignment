@@ -3,8 +3,7 @@ package com.inmobi.assignment;
 import java.util.ArrayList;
 import java.util.Random;
 
-import junit.framework.Assert;
-
+import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 

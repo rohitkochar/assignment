@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -83,13 +84,14 @@ class BSTNode<K extends Serializable & Comparable<K>> implements Serializable {
  */
 public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> implements StorageHandler<K> {
     
-    private final String     filePath = "/tmp/store.bin";
-    private final Logger     logger   = Logger.getLogger(this.getClass());
+    private final String     filePath;
+    private final Logger     logger = Logger.getLogger(this.getClass());
     
     private RandomAccessFile file;
     
-    public TreeFileStorageHandler() {
+    public TreeFileStorageHandler(String filePath) {
     
+        this.filePath = filePath;
         try {
             logger.debug("File path of persistent store is " + filePath);
             File tmpFile = new File(filePath);
@@ -107,9 +109,9 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
     public void deleteAll() {
     
         File file = new File(filePath);
-        file.delete();
+        
         try {
-            file.createNewFile();
+            new FileOutputStream(file).write((new String()).getBytes());
         } catch (IOException e) {
             logger.error("Error while creating storage file", e);
         }

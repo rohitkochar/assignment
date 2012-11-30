@@ -22,7 +22,7 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
     
     private long                         maxMemory;
     private long                         timeForDrainage;
-    private boolean                      isInitialized = false;
+    private boolean                      isInitialized   = false;
     private ScheduledExecutorService     executor;
     private MemoryManager<K>             manager;
     private StorageHandler<K>            memoryStorage;
@@ -31,10 +31,11 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
     // this lock and condition is used to synchronize between memory storage and
     // memory handler
     
-    private final ReentrantReadWriteLock lock          = new ReentrantReadWriteLock();
-    private final Condition              notfull       = lock.writeLock().newCondition();
+    private final ReentrantReadWriteLock lock            = new ReentrantReadWriteLock();
+    private final Condition              notfull         = lock.writeLock().newCondition();
     private Logger                       logger;
-    public static final String           configFile    = "src/main/resources/config.properties";
+    public static final String           configFile      = "src/main/resources/config.properties";
+    public static final String           persistentStore = "/tmp/store.bin";
     
     private void configure(String configFilePath) throws org.apache.commons.configuration.ConfigurationException {
     
@@ -83,7 +84,7 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
             throw new InitializationException("Exception while init");
         }
         memoryStorage = new MemoryStorageHandler<K>(maxMemory, lock, notfull);
-        fileStorage = new TreeFileStorageHandler<K>();
+        fileStorage = new TreeFileStorageHandler<K>(persistentStore);
         
         executor = new ScheduledThreadPoolExecutor(1);
         manager = new MemoryManager<K>(memoryStorage, fileStorage, lock, notfull, maxMemory, timeForDrainage);
