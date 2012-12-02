@@ -105,7 +105,6 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
         }
     }
     
-    @Override
     public void deleteAll() {
     
         File file = new File(filePath);
@@ -118,7 +117,6 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
         
     }
     
-    @Override
     public byte[] get(K key) {
     
         logger.debug("Getting key =" + key + " from persistent store");
@@ -170,7 +168,6 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
         
     }
     
-    @Override
     public Iterator<K> getIterator() {
     
         throw new UnsupportedOperationException();
@@ -269,13 +266,11 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
         file.write(nodeBytes);
     }
     
-    @Override
     public boolean isFull() {
     
         return false;
     }
     
-    @Override
     public void put(K key, byte[] value) {
     
         try {

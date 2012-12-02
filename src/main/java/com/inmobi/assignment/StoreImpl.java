@@ -52,7 +52,6 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
                         + timeForDrainage + "seconds");
     }
     
-    @Override
     public void destroy() {
     
         logger.debug("Shutting down the executor service");
@@ -61,7 +60,6 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
         }
     }
     
-    @Override
     public byte[] get(K key) throws InitializationException {
     
         byte[] value;
@@ -75,7 +73,6 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
         }
     }
     
-    @Override
     public void init(String configFilePath) throws InitializationException {
     
         try {
@@ -93,7 +90,6 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
         isInitialized = true;
     }
     
-    @Override
     public void put(K key, byte[] value) throws InitializationException {
     
         if (!isInitialized) throw new InitializationException("Store is not initialized");

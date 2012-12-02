@@ -32,7 +32,6 @@ public class MemoryStorageHandler<K extends Serializable & Comparable<K>> implem
         this.notfull = notfull;
     }
     
-    @Override
     public void deleteAll() {
     
         // Need not use concurrent map here as already a write lock is acquired
@@ -42,7 +41,6 @@ public class MemoryStorageHandler<K extends Serializable & Comparable<K>> implem
         logger.debug("Deleted all the keys from in memory store");
     }
     
-    @Override
     public byte[] get(K key) {
     
         try {
@@ -55,13 +53,11 @@ public class MemoryStorageHandler<K extends Serializable & Comparable<K>> implem
         }
     }
     
-    @Override
     public Iterator<K> getIterator() {
     
         return storage.keySet().iterator();
     }
     
-    @Override
     public boolean isFull() {
     
         if (totalSize >= maxMemory) return true;
@@ -73,7 +69,6 @@ public class MemoryStorageHandler<K extends Serializable & Comparable<K>> implem
      * key value
      */
     
-    @Override
     public void put(K key, byte[] value) {
     
         try {
