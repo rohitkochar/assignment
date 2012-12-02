@@ -16,18 +16,16 @@ public class MemoryManager<K extends Serializable & Comparable<K>> implements Ru
     private long                         lastrun = 0;
     private final StorageHandler<K>      memoryStorage;
     private final StorageHandler<K>      fileStorage;
-    private final long                   maxMemory;
     private final long                   drainageTime;
     private final Logger                 logger  = Logger.getLogger(getClass());
     
     public MemoryManager(StorageHandler<K> memoryStorage, StorageHandler<K> fileStorage, ReentrantReadWriteLock lock,
-                    Condition notfull, long maxMemory, long drainageTime) {
+                    Condition notfull, long drainageTime) {
     
         this.lock = lock;
         this.notfull = notfull;
         this.memoryStorage = memoryStorage;
         this.fileStorage = fileStorage;
-        this.maxMemory = maxMemory;
         this.drainageTime = drainageTime;
         lastrun = System.currentTimeMillis();
         

@@ -24,7 +24,7 @@ public class MemoryManagerTest {
         long drainageTime = 100;
         StorageHandler<String> memoryStorage = new MemoryStorageHandler<String>(maxMemory, lock, notfull);
         StorageHandler<String> fileStorage = new TreeFileStorageHandler<String>(filePath);
-        MemoryManager<String> manager = new MemoryManager<String>(memoryStorage, fileStorage, lock, notfull, maxMemory,
+        MemoryManager<String> manager = new MemoryManager<String>(memoryStorage, fileStorage, lock, notfull,
                         drainageTime);
         
         memoryStorage.put("TESTING2", "value".getBytes());// memory shud not be
@@ -41,7 +41,7 @@ public class MemoryManagerTest {
         long drainageTime = 1;
         StorageHandler<String> memoryStorage = new MemoryStorageHandler<String>(maxMemory, lock, notfull);
         StorageHandler<String> fileStorage = new TreeFileStorageHandler<String>(filePath);
-        MemoryManager<String> manager = new MemoryManager<String>(memoryStorage, fileStorage, lock, notfull, maxMemory,
+        MemoryManager<String> manager = new MemoryManager<String>(memoryStorage, fileStorage, lock, notfull,
                         drainageTime);
         
         memoryStorage.put("TESTING1", "value".getBytes());// memory shud not be
@@ -59,7 +59,7 @@ public class MemoryManagerTest {
         long drainageTime = 10;
         StorageHandler<String> memoryStorage = new MemoryStorageHandler<String>(maxMemory, lock, notfull);
         StorageHandler<String> fileStorage = new TreeFileStorageHandler<String>(filePath);
-        MemoryManager<String> manager = new MemoryManager<String>(memoryStorage, fileStorage, lock, notfull, maxMemory,
+        MemoryManager<String> manager = new MemoryManager<String>(memoryStorage, fileStorage, lock, notfull,
                         drainageTime);
         
         memoryStorage.put("TESTING", "value".getBytes());// memory shud be full

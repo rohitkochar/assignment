@@ -145,8 +145,7 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
                     return currentNode.getValue();
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Error while converting bytes to BSTNode", e);
         }
         return null;
         
@@ -161,8 +160,7 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
             
             dout.writeObject(s);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Object " + s + "Cannot be serialized");
         }
         return bout.toByteArray();
         
@@ -193,8 +191,7 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
             din = new ObjectInputStream(bin);
             node = (BSTNode<K>) din.readObject();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Corrupted data node retrieved from file", e);
         }
         return node;
     }
@@ -216,7 +213,7 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
                 if (key.compareTo(currentNode.getKey()) == 0) {
                     // key already exist hence overwrite the
                     // node but the new node should have
-                    // same left and rite child as before
+                    // same left and right child as before
                     node.setLeftOffset(currentNode.getLeftOffset());
                     node.setRightOffset(currentNode.getRightOffset());
                     insertNodeAt(currentOffset, node);
@@ -236,8 +233,7 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
                     if (currentOffset != -1) {
                         currentNode = getNode(currentOffset);
                     } else {// we are at leaf node hence insert here and update
-                            // the
-                            // currentNode
+                            // the currentNode
                         newNodeOffset = file.length();
                         if (isLeftChild) {
                             currentNode.setLeftOffset(newNodeOffset);
@@ -277,8 +273,8 @@ public class TreeFileStorageHandler<K extends Serializable & Comparable<K>> impl
             logger.debug("Adding key =" + key + "in file");
             insertIntoBST(key, value);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Error while writing key value to file for key =" + key, e);
+            
         }
         
     }

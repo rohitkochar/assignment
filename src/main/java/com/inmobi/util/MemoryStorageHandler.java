@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -17,9 +18,9 @@ import org.apache.log4j.Logger;
 public class MemoryStorageHandler<K extends Serializable & Comparable<K>> implements StorageHandler<K> {
     
     private final long                   maxMemory;
-    // This member needs to be volatile as its value could be altered from
-    // another thread
-    volatile private long                totalSize = 0;
+    // This member needs to be volatile and thread safe ,as its value could be
+    // altered from another thread in parallel
+    volatile private AtomicLong          totalSize = new AtomicLong(0);
     private final ReentrantReadWriteLock lock;
     private final Condition              notfull;
     private final Logger                 logger    = Logger.getLogger(this.getClass());
@@ -37,7 +38,7 @@ public class MemoryStorageHandler<K extends Serializable & Comparable<K>> implem
         // Need not use concurrent map here as already a write lock is acquired
         // before the put operation.
         storage = new HashMap<K, byte[]>();
-        totalSize = 0;
+        totalSize = new AtomicLong(0);
         logger.debug("Deleted all the keys from in memory store");
     }
     
@@ -60,7 +61,7 @@ public class MemoryStorageHandler<K extends Serializable & Comparable<K>> implem
     
     public boolean isFull() {
     
-        if (totalSize >= maxMemory) return true;
+        if (totalSize.get() >= maxMemory) return true;
         return false;
     }
     
@@ -81,7 +82,7 @@ public class MemoryStorageHandler<K extends Serializable & Comparable<K>> implem
              * wait in while loop as
              * sometime all threads are invoked accidentally by JVM
              */
-            while (totalSize >= maxMemory) {
+            while (totalSize.get() >= maxMemory) {
                 try {
                     logger.debug("Memory is full....Waiting for the worker to run before adding key =" + key);
                     notfull.await();
@@ -93,7 +94,7 @@ public class MemoryStorageHandler<K extends Serializable & Comparable<K>> implem
             
             logger.debug("Adding key =" + key + " to inmemory");
             storage.put(key, value);
-            totalSize += value.length;
+            totalSize.addAndGet(value.length);
             logger.debug("Total size of memory used is =" + totalSize);
         } finally {
             lock.writeLock().unlock();

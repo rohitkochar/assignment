@@ -22,7 +22,8 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
     
     private long                         maxMemory;
     private long                         timeForDrainage;
-    private boolean                      isInitialized   = false;
+    private long                         timeForMemoryHandler;
+    private boolean                      isInitialized = false;
     private ScheduledExecutorService     executor;
     private MemoryManager<K>             manager;
     private StorageHandler<K>            memoryStorage;
@@ -31,11 +32,10 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
     // this lock and condition is used to synchronize between memory storage and
     // memory handler
     
-    private final ReentrantReadWriteLock lock            = new ReentrantReadWriteLock();
-    private final Condition              notfull         = lock.writeLock().newCondition();
+    private final ReentrantReadWriteLock lock          = new ReentrantReadWriteLock();
+    private final Condition              notfull       = lock.writeLock().newCondition();
     private Logger                       logger;
-    public static final String           configFile      = "src/main/resources/config.properties";
-    public static final String           persistentStore = "/tmp/store.bin";
+    private String                       persistentStore;
     
     private void configure(String configFilePath) throws org.apache.commons.configuration.ConfigurationException {
     
@@ -46,10 +46,13 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
         config.load(configFilePath);
         // maxMemory in bytes
         maxMemory = config.getLong("maxMemory", 10000);
-        // time in seconds
+        // max time allowed between consecutive writes of memory to persistent
+        // store, in seconds
         timeForDrainage = config.getLong("timeForDrainage", 30);
+        timeForMemoryHandler = config.getLong("timeForMemoryHandler", 5);
         logger.debug("Max memory usage allowed is " + maxMemory + " bytes" + "  and time interval for drainage is "
                         + timeForDrainage + "seconds");
+        persistentStore = config.getString("persistentStore", "/tmp/store.bin");
     }
     
     public void destroy() {
@@ -84,9 +87,9 @@ public class StoreImpl<K extends Serializable & Comparable<K>> implements Store<
         fileStorage = new TreeFileStorageHandler<K>(persistentStore);
         
         executor = new ScheduledThreadPoolExecutor(1);
-        manager = new MemoryManager<K>(memoryStorage, fileStorage, lock, notfull, maxMemory, timeForDrainage);
+        manager = new MemoryManager<K>(memoryStorage, fileStorage, lock, notfull, timeForDrainage);
         // scheduling memory management task
-        executor.scheduleWithFixedDelay(manager, 0, timeForDrainage, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(manager, 0, timeForMemoryHandler, TimeUnit.SECONDS);
         isInitialized = true;
     }
     
