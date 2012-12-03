@@ -14,6 +14,7 @@ Assumptions And TradeOffs
 3. After the data is transfered from memory to file,all the blocked threads are invoked.
 	This could cause sudden spike in memory usage beyond threshold value.
 	*TradeOff*:Alternative to this could be invoking blocked threads one by one which could have affected the performance
+	*EDIT* On re investigating the implementation the above issue won't happen because the invoking threads need to re acquire the write lock.
 4. If multiple instances of Store are running under the same JVM than it is mandate to specify different paths of persistent storage file.
 5. Null is not a valid value to be stored against any key.Storing null would behave as if the key doesn't exist.
 
